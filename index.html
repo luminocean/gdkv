@@ -8,17 +8,24 @@
     <div id="headStep" class="step">
         <p>0. Hey, this is a demo for <em>Google Drive Key-Value Storage</em> tool - which enables you to use Google Drive as a simple key-value database.</p>
     </div>
+    <hr />
 
     <div id="tokenStep" class="step">
         <p>1. First, tell me your access token: (which you can get from tool/tell_me_token/tell.js using node.js)</p>
         <input id="tokenInput" type="text" placeholder="ya00.xxx_yy"></input>
         <button id="tokenDoneBtn">done</button>
     </div>
+    <hr />
 
     <div id="fileListStep" class="step">
         <p>2. Here's what you have on your google drive:</p>
         <div id="fileListDiv"></div>
+        <p>Your key-value data on cload:</p>
+        <div id="kvCloudDiv">
+            NOTHING
+        </div>
     </div>
+    <hr />
 
     <div id="kvStep" class="step">
         <p id="kvPrompt">3. You can input some key-value pairs to store in memory first:</p>
@@ -26,13 +33,18 @@
         <label>value: </label><input id="valueInput" type="text" placeholder="e.g. Robert"></input>
         <button id="addKVBtn">add</button>
 
-        <div id="kvListDiv"></div>
+        <p>Your key-value data in memory:</p>
+        <div id="kvMemoryDiv">
+            NOTHING
+        </div>
     </div>
+    <hr />
 
     <div id="syncStep" class="step">
-        <p id="syncPrompt">4. Now you can sync data in memory to the cloud side:</p>
+        <p id="syncPrompt">4. Now you can sync data in memory with the cloud side:</p>
         <button id="syncBtn">sync</button>
     </div>
+    <hr />
 </div>
 <script src="vendor/require.js" data-main="index"></script>
 </body>

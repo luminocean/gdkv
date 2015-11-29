@@ -2,12 +2,12 @@
 
 define(function(){
     var KVStore = function(){
-        this.storage = {};
+        this.kvMemory = {};
     };
 
     KVStore.prototype.set = function(pair, callback){
         for(var key in pair){
-            this.storage[key] = pair[key];
+            this.kvMemory[key] = pair[key];
         }
     };
 

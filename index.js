@@ -7,7 +7,9 @@ require.config({
 　　}
 });
 
+// 全局数据
 var core, token;
+
 requirejs(["jquery","core"], function($, core) {
     window.core = core;
 
@@ -55,7 +57,9 @@ requirejs(["jquery","core"], function($, core) {
 
 function listFiles(token){
     // 列出所有文件
-    core.listFiles(token, function(files){
+    core.listFiles(token, function(err, files){
+        if(err) return console.log(err);
+
         $("#fileListStep").show();
         for(var i in files){
             var file = files[i];
@@ -68,6 +72,19 @@ function listFiles(token){
         // 进入第 2 步，显示键值对输入页面
         showKV();
     });
+
+    core.getKVCloud(token, false, function(err, kv){
+        if(err) return console.log(err);
+
+        for(var key in kv){
+            $('#kvCloudDiv').empty();
+            break;
+        }
+
+        for(var key in kv){
+            $('#kvCloudDiv').append('<p>'+key+' : '+kv[key]+'</p>');
+        }
+    });
 }
 
 function showKV(){
@@ -76,7 +93,9 @@ function showKV(){
 
 // 显示键值对列表
 function displayKVList(pairs){
+    $('#kvMemoryDiv').empty();
+
     for(var key in pairs){
-        $('#kvListDiv').append('<p>'+key+' : '+pairs[key]+'</p>');
+        $('#kvMemoryDiv').append('<p>'+key+' : '+pairs[key]+'</p>');
     }
 }

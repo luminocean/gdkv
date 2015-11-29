@@ -2,10 +2,7 @@
 define(function(){
     // 获取所有文件列表
     var list = function(token, callback){
-        var headers = {
-            'Authorization':'Bearer ' + token
-        };
-        http(headers, function(response){
+        http(token, function(err, response){
             if( response && response.items ){
                 return callback(null, response.items);
             }
@@ -16,10 +13,7 @@ define(function(){
 
     // 上传文件
     var upload = function(token, file, callback){
-        var headers = {
-            'Authorization':'Bearer ' + token
-        };
-        http(headers, 'post', file, function(response){
+        http(token, 'post', file, function(err, response){
             if( response && response.items ){
                 return callback(null, response.items);
             }
@@ -30,9 +24,20 @@ define(function(){
         });
     };
 
+    // 获取指定文件名的文件
+    var get = function(token, fileId, callback){
+        http(token, 'get', null,
+            method2url['get']+'/'+fileId+'?alt=media', function(err, response){
+            if(err) return callback(err);
+
+            callback(null, response);
+        });
+    };
+
     return{
         'list': list,
-        'upload': upload
+        'upload': upload,
+        'get': get
     };
 });
 
@@ -43,10 +48,10 @@ var method2url = {
 };
 
 // HTTP执行方法
-function http(headers, method, file, callback){
+function http(token, method, option, url, callback){
     // 允许中间参数method, data没写的时候callback也可以直接写在最后
     var argLen = arguments.length;
-    if(argLen < 4 && typeof(arguments[argLen-1]) == 'function'){
+    if(argLen < 5 && typeof(arguments[argLen-1]) == 'function'){
         callback = arguments[argLen-1];
         arguments[argLen-1] = undefined;
     }
@@ -55,24 +60,21 @@ function http(headers, method, file, callback){
     var xhr = new XMLHttpRequest();
     xhr.onload = function(){
         if(this.readyState !== 4 || this.status !== 200 )
-            return console.log('weird ready state:', this.responseText);
+            return callback(new Error('weird ready state:' + this.responseText));
 
-        callback(JSON.parse(this.responseText));
+        callback(null, JSON.parse(this.responseText));
     };
 
-    var url = method2url[method];
-    xhr.open(method, url);
+    xhr.open(method, url || method2url[method]); // ajax目标url
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token); // 认证字段
 
-    for(var key in headers){
-        xhr.setRequestHeader(key, headers[key]);
-    }
-    // 要传送的请求内容，get请求为空，post请求有内容要单独处理
+    // 要传送的请求内容
     var content = undefined;
 
     // post请求的话，要进行内容拆分
     if(method == 'post'){
-        var metadata = file.metadata;
-        var data = file.data;
+        var metadata = option.metadata;
+        var data = option.data;
         var boundary = "abrownquickfoxjumpsoveralazydog";
 
         xhr.setRequestHeader('Content-type', 'multipart/related; boundary='+boundary);

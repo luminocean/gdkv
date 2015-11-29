@@ -36,7 +36,7 @@ requirejs(["jquery","core"], function($, core) {
             pair[key] = value;
             core.set(pair);
 
-            displayKVList(core.getKVStorage());
+            displayKVMemory(core.getKVMemory());
             // 添加一项后，显示同步选项
             $("#syncStep").show();
         });
@@ -45,7 +45,13 @@ requirejs(["jquery","core"], function($, core) {
             core.sync(token, function(err, response){
                 if(err) return console.log(err);
 
-                console.log('sync result:', response);
+                displayKVMemory(core.getKVMemory());
+
+                core.getKVCloud(token, false, function(err, kv){
+                    if(err) return console.log(err);
+
+                    displayKVCloud(kv);
+                });
             });
         });
 
@@ -76,14 +82,7 @@ function listFiles(token){
     core.getKVCloud(token, false, function(err, kv){
         if(err) return console.log(err);
 
-        for(var key in kv){
-            $('#kvCloudDiv').empty();
-            break;
-        }
-
-        for(var key in kv){
-            $('#kvCloudDiv').append('<p>'+key+' : '+kv[key]+'</p>');
-        }
+        displayKVCloud(kv);
     });
 }
 
@@ -91,8 +90,23 @@ function showKV(){
     $("#kvStep").show();
 }
 
-// 显示键值对列表
-function displayKVList(pairs){
+// 显示云端键值对数据
+function displayKVCloud(pairs){
+    if(Object.getOwnPropertyNames(pairs).length == 0)
+        return;
+
+    $('#kvCloudDiv').empty();
+    
+    for(var key in pairs){
+        $('#kvCloudDiv').append('<p>'+key+' : '+pairs[key]+'</p>');
+    }
+}
+
+// 显示内存键值对数据
+function displayKVMemory(pairs){
+    if(Object.getOwnPropertyNames(pairs).length == 0)
+        return;
+
     $('#kvMemoryDiv').empty();
 
     for(var key in pairs){

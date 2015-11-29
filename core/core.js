@@ -2,7 +2,7 @@
 
 // 云端存储的文件名
 var kvFileName = 'kvdata';
-var kvCloud; // 云端数据在本地内存的副本
+var kvCloud, kvCloudFileId; // 云端数据在本地内存的副本信息
 
 define(['gdapi','kvstore'], function(gdapi, kvstore){
     var store = new kvstore.KVStore();
@@ -17,6 +17,7 @@ define(['gdapi','kvstore'], function(gdapi, kvstore){
     }
 
     function getKVCloud(token, cached, callback){
+        // 如果选择使用缓存，那么有的话自动返回
         if(cached && kvCloud){
             return callback(null, kvCloud);
         }
@@ -36,6 +37,7 @@ define(['gdapi','kvstore'], function(gdapi, kvstore){
 
             // 如果找不到存储文件，就返回空
             if(!fileId) return callback(null, null);
+            kvCloudFileId = fileId;
 
             // 定向寻找这个文件
             gdapi.get(token, fileId, function(err, content){
@@ -47,7 +49,7 @@ define(['gdapi','kvstore'], function(gdapi, kvstore){
     }
 
     // 获取内存中的KV键值对
-    function getKVStorage(){
+    function getKVMemory(){
         return store.kvMemory;
     }
 
@@ -59,38 +61,54 @@ define(['gdapi','kvstore'], function(gdapi, kvstore){
     // 本地内存与云端同步
     function sync(token, callback){
         var kvMemory = store.kvMemory;
+        var action = 'update'; // 默认是进行更新操作（使用PUT）
 
         // 第一步是将云端数据合并到本地数据中
         getKVCloud(token, true, function(err, kvCloud){
             if(err) return callback(err);
 
-            // 云端有但是本地没有的数据合并到本地来
-            // 如果已经有了就忽略云端的
-            for(var key in kvCloud){
-                if(!key in kvMemory){
-                    kvMemory[key] = kvCloud[key];
+            if(kvCloud){
+                // 云端有但是本地没有的数据合并到本地来
+                // 如果已经有了就忽略云端的
+                for(var key in kvCloud){
+                    if(!kvMemory[key]){
+                        kvMemory[key] = kvCloud[key];
+                    }
                 }
+            }else{
+                // 如果云端没有数据，那么接下来的操作需要改为post
+                action = 'upload';
             }
-        });
 
-        // （将本地存储序列化后传输到云端）
-        var data = JSON.stringify(kvMemory);
-        gdapi.upload(token, {
-            metadata:{
-                title: kvFileName
-            },
-            data: data
-        }, function(err, response){
-            if(err) return callback(err);
+            // 上传本地键值对数据到云端
+            var data = JSON.stringify(kvMemory);
 
-            callback(null, response);
+            if(action == 'upload'){
+                gdapi.upload(token, {
+                    metadata:{
+                        title: kvFileName
+                    },
+                    data: data
+                }, finish);
+            }else if(action == 'update'){
+                gdapi.update(token, {
+                    id: kvCloudFileId,
+                    metadata:{},
+                    data: data
+                }, finish);
+            }
+
+            function finish(err, response){
+                if(err) return callback(err);
+                callback(null, response);
+            }
         });
     }
 
     return{
         'listFiles': listFiles,
         'set': set,
-        'getKVStorage': getKVStorage,
+        'getKVMemory': getKVMemory,
         'getKVCloud': getKVCloud,
         'sync': sync
     };

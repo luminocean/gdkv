@@ -3,6 +3,8 @@ define(function(){
     // 获取所有文件列表
     var list = function(token, callback){
         http(token, function(err, response){
+            if(err) return callback(err);
+
             if( response && response.items ){
                 return callback(null, response.items);
             }
@@ -14,6 +16,25 @@ define(function(){
     // 上传文件
     var upload = function(token, file, callback){
         http(token, 'post', file, function(err, response){
+            if(err) return callback(err);
+
+            if( response && response.items ){
+                return callback(null, response.items);
+            }
+            if( response ){
+                return callback(null, response);
+            }
+            callback(new Error(response));
+        });
+    };
+
+    // 更新指定文件
+    var update = function(token, file, callback){
+        if(!file.id) return callback(new Error('更新文件时找不到fileId'));
+
+        http(token, 'put', file, method2url['put']+'/'+file.id, function(err, response){
+            if(err) return callback(err);
+
             if( response && response.items ){
                 return callback(null, response.items);
             }
@@ -36,15 +57,17 @@ define(function(){
 
     return{
         'list': list,
+        'get': get,
         'upload': upload,
-        'get': get
+        'update': update
     };
 });
 
 // HTTP方法与对应URL的映射
 var method2url = {
     'get': 'https://www.googleapis.com/drive/v2/files',
-    'post': 'https://www.googleapis.com/upload/drive/v2/files?uploadType=multipart'
+    'post': 'https://www.googleapis.com/upload/drive/v2/files?uploadType=multipart',
+    'put': 'https://www.googleapis.com/upload/drive/v2/files'
 };
 
 // HTTP执行方法
@@ -79,6 +102,11 @@ function http(token, method, option, url, callback){
 
         xhr.setRequestHeader('Content-type', 'multipart/related; boundary='+boundary);
         content = buildMultipartContent(metadata, data, boundary);
+    }
+    // 如果是put，简单更新云端文件即可，不需要元数据了，因此不必进行拆分
+    else if(method == 'put'){
+        xhr.setRequestHeader('Content-type', 'application/json');
+        content = option.data;
     }
 
     xhr.send(content);

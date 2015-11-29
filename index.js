@@ -7,7 +7,7 @@ require.config({
 　　}
 });
 
-var core;
+var core, token;
 requirejs(["jquery","core"], function($, core) {
     window.core = core;
 
@@ -20,8 +20,9 @@ requirejs(["jquery","core"], function($, core) {
         // 填写token后，可以点击done进入下一步
         $("#tokenDoneBtn").on('click', function(){
             var token = $("#tokenInput").val();
+            window.token = token;
             localStorage.gdriveToken = token;
-            
+
             listFiles(token);
         });
 
@@ -35,6 +36,16 @@ requirejs(["jquery","core"], function($, core) {
             core.set(pair);
 
             displayKVList(core.getKVStorage());
+            // 添加一项后，显示同步选项
+            $("#syncStep").show();
+        });
+
+        $('#syncBtn').on('click', function(){
+            core.sync(token, function(err, response){
+                if(err) return console.log(err);
+
+                console.log('sync result:', response);
+            });
         });
 
         // 显示第 0,1 步
@@ -49,7 +60,10 @@ function listFiles(token){
         $("#fileListStep").show();
         for(var i in files){
             var file = files[i];
-            $('#fileListDiv').append('<p><a href="#">' + file.title + '</a></p>');
+            $('#fileListDiv').append(
+                '<p><img src="' + file.iconLink + '"></img>'
+                +'<a href="' + file.webContentLink + '">' + file.title + '</a></p>'
+            );
         }
 
         // 进入第 2 步，显示键值对输入页面

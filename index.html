@@ -20,8 +20,8 @@
         <div id="fileListDiv"></div>
     </div>
 
-    <div  id="kvStep" class="step">
-        <p id="kvPrompt">3. Now you can input some key-value pairs to store in memory first:</p>
+    <div id="kvStep" class="step">
+        <p id="kvPrompt">3. You can input some key-value pairs to store in memory first:</p>
         <label>key: </label><input id="keyInput" type="text" placeholder="e.g. name"></input>
         <label>value: </label><input id="valueInput" type="text" placeholder="e.g. Robert"></input>
         <button id="addKVBtn">add</button>
@@ -29,6 +29,10 @@
         <div id="kvListDiv"></div>
     </div>
 
+    <div id="syncStep" class="step">
+        <p id="syncPrompt">4. Now you can sync data in memory to the cloud side:</p>
+        <button id="syncBtn">sync</button>
+    </div>
 </div>
 <script src="vendor/require.js" data-main="index"></script>
 </body>

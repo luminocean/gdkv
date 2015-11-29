@@ -1,25 +1,17 @@
-/**
- * 键值存储对象
- * @constructor
- * @param {object} options 初始化参数
- * @param {string} options.token 访问google drive所必须的token字符串
- */
-var KVStore = function(options){
-    this.mem = {};
-};
+// 提供键值存储功能的模块
 
-KVStore.prototype.set(pair, callback){
-    // 直接把键值对写入内存
-    for(var key in pair){
-        this.mem[key] = pair[key];
-    }
-};
+define(function(){
+    var KVStore = function(){
+        this.storage = {};
+    };
 
-KVStore.prototype.get(key, callback){
+    KVStore.prototype.set = function(pair, callback){
+        for(var key in pair){
+            this.storage[key] = pair[key];
+        }
+    };
 
-};
-
-// 本地内存与云端同步
-KVStore.prototype.sync(callback){
-
-};
+    return{
+        'KVStore': KVStore
+    };
+});

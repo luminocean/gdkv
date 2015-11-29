@@ -2,7 +2,8 @@ require.config({
     paths: {
         "jquery": "vendor/jquery-2.1.4.min",
         "gdapi": "core/gdapi",
-        "core": "core/core"
+        "core": "core/core",
+        "kvstore": "core/kvstore"
 　　}
 });
 
@@ -11,20 +12,34 @@ requirejs(["jquery","core"], function($, core) {
     window.core = core;
 
     $(function(){
-        // 显示第 0,1 步
-        $('#headStep').show();
-        $('#tokenStep').show();
-
         // 如果本地存储里有token，直接填在input里面
         if(localStorage.gdriveToken){
             $("#tokenInput").val(localStorage.gdriveToken);
         }
 
-        // 填写token后，点击done进入下一步
+        // 填写token后，可以点击done进入下一步
         $("#tokenDoneBtn").on('click', function(){
             var token = $("#tokenInput").val();
+            localStorage.gdriveToken = token;
+            
             listFiles(token);
         });
+
+        //
+        $("#addKVBtn").on('click', function(){
+            var key = $("#keyInput").val();
+            var value = $("#valueInput").val();
+
+            var pair = {};
+            pair[key] = value;
+            core.set(pair);
+
+            displayKVList(core.getKVStorage());
+        });
+
+        // 显示第 0,1 步
+        $('#headStep').show();
+        $('#tokenStep').show();
     });
 });
 
@@ -44,4 +59,11 @@ function listFiles(token){
 
 function showKV(){
     $("#kvStep").show();
+}
+
+// 显示键值对列表
+function displayKVList(pairs){
+    for(var key in pairs){
+        $('#kvListDiv').append('<p>'+key+' : '+pairs[key]+'</p>');
+    }
 }

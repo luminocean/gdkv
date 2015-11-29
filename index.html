@@ -17,12 +17,16 @@
 
     <div id="fileListStep" class="step">
         <p>2. Here's what you have on your google drive:</p>
-        <div id="fileListDiv">
-        </div>
+        <div id="fileListDiv"></div>
     </div>
 
     <div  id="kvStep" class="step">
-        <p id="kvPrompt">3. Now you can input some key-value pairs to have a test run:</p>
+        <p id="kvPrompt">3. Now you can input some key-value pairs to store in memory first:</p>
+        <label>key: </label><input id="keyInput" type="text" placeholder="e.g. name"></input>
+        <label>value: </label><input id="valueInput" type="text" placeholder="e.g. Robert"></input>
+        <button id="addKVBtn">add</button>
+
+        <div id="kvListDiv"></div>
     </div>
 
 </div>

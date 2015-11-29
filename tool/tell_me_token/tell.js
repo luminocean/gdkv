@@ -38,8 +38,8 @@ function authorize(credentials, callback) {
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, function(err, token) {
-    if (err) {
-      getNewToken(oauth2Client, callback);
+    if (process.argv[2] === 'refresh' || err) {
+        getNewToken(oauth2Client, callback);
     } else {
       oauth2Client.credentials = JSON.parse(token);
       callback(oauth2Client);

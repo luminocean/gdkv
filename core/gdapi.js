@@ -1,3 +1,5 @@
+// 提供访问google drive的API
+
 function http(url, headers, method, data, callback){
     // 允许中间参数method, data没写的时候callback也可以直接写在最后
     var argLen = arguments.length;

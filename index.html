@@ -1,16 +1,30 @@
 <html>
 <meta charset="utf-8">
+<head>
+    <link rel="stylesheet" href="index.css" >
+</head>
 <body>
 <div>
-    <p>0. Hey, this is <em>Google Drive Key-Value Storage</em> tool - which enables you to use Google Drive as a simple key-value database.</p>
-
-    <p>1. First, tell me your access token: (which you can get from tool/tell_me_token/tell.js using node.js)</p>
-    <input id="tokenInput" type="text" placeholder="ya00.xxx_yy"></input>
-    <button id="tokenDoneBtn">done</button>
-
-    <p>2. Here's what you have on your google drive:</p>
-    <div id="fileListDiv">
+    <div id="headStep" class="step">
+        <p>0. Hey, this is a demo for <em>Google Drive Key-Value Storage</em> tool - which enables you to use Google Drive as a simple key-value database.</p>
     </div>
+
+    <div id="tokenStep" class="step">
+        <p>1. First, tell me your access token: (which you can get from tool/tell_me_token/tell.js using node.js)</p>
+        <input id="tokenInput" type="text" placeholder="ya00.xxx_yy"></input>
+        <button id="tokenDoneBtn">done</button>
+    </div>
+
+    <div id="fileListStep" class="step">
+        <p>2. Here's what you have on your google drive:</p>
+        <div id="fileListDiv">
+        </div>
+    </div>
+
+    <div  id="kvStep" class="step">
+        <p id="kvPrompt">3. Now you can input some key-value pairs to have a test run:</p>
+    </div>
+
 </div>
 <script src="vendor/require.js" data-main="index"></script>
 </body>

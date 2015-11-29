@@ -26,7 +26,6 @@ requirejs(["jquery","core"], function($, core) {
             listFiles(token);
         });
 
-        //
         $("#addKVBtn").on('click', function(){
             var key = $("#keyInput").val();
             var value = $("#valueInput").val();

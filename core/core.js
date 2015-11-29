@@ -27,7 +27,9 @@ define(['gdapi','kvstore'], function(gdapi, kvstore){
         // （将本地存储序列化后传输到云端）
         var data = JSON.stringify(store.storage);
         gdapi.upload(token, {
-            type: 'application/json',
+            metadata:{
+                title: 'kvdata'
+            },
             data: data
         }, callback);
     }

@@ -1,0 +1,15 @@
+{
+  "name": "tell_me_token",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tell.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "luMinO",
+  "license": "MIT",
+  "dependencies": {
+    "google-auth-library": "^0.9.7",
+    "googleapis": "^2.1.6"
+  }
+}
